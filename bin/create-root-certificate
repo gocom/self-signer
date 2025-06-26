@@ -2,6 +2,11 @@
 
 set -eu
 
+if ! [ "$DOMAIN" ]; then
+  echo "DOMAIN is required" >&2
+  exit 1
+fi
+
 cd "$CERTIFICATES_DIRECTORY"
 
 # Clean up.

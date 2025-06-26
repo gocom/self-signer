@@ -1,11 +1,13 @@
 <div align="center">
 
-📨 Self-signer
+📨 <br/>Self-signer
 =====
 
 Docker image for generating self-signed certificates.
 
-`ghcr.io/gocom/self-signer`
+Image: `ghcr.io/gocom/self-signer` | [Container Registry](https://github.com/gocom/self-signer/pkgs/container/self-signer)
+
+<hr/>
 
 </div>
 
@@ -34,16 +36,43 @@ configuration file. For example:
 ```yml
 services:
   self-signer:
-    image: ghcr.io/gocom/self-signer:1.0.0
+    image: ghcr.io/gocom/self-signer:0.1.0
     volumes:
       - ./certificates:/certificates
     environment:
       - DOMAIN=example.test
 ```
 
+In the above replace `1.0.0` with the version tag you want to use. It is recommended that you reference specific
+version or hash. The image follows [Semantic Versioning](https://semver.org/).
+
 When the project's services are started with Docker Compose, the **self-signer** service creates certificate files
 to the mounted `certificates` directory, located in the project's root directory. The server certificate will be valid
 for `example.test` domain, and it's subdomains.
+
+If other services depend on the self-signer's certificates, try to add `depends_on`
+declaration to the other dependant service. The `service_completed_successfully` condition can be used here, as by
+default, the self-signer container only runs once, creating the certificates and then shutting down.
+
+```yml
+services:
+  # ...
+  nginx:
+    # ...
+    volumes:
+      # ...
+      - ./certificates:/certificates
+    depends_on:
+      # ...
+      self-signer:
+        condition: service_completed_successfully
+```
+
+Alternative, one could run the `self-signer` manually before starting other services:
+
+```shell
+$ docker compose run --rm self-signer
+```
 
 ### Excluding files from version control
 
@@ -117,6 +146,33 @@ docker run --rm --volume ./certificates:/certificates create-server-certificate
 ```
 
 Please note that the above will overwrite any existing certificate files.
+
+### Health check
+
+The image also contains `health-check` utility, which can be used in cases where you need a long-running service,
+or if you want to build conditional restarting based on whether the certificates still exist. An illustrative example
+using Docker Compose:
+
+```yml
+services:
+  # ...
+  self-signer:
+    image: ghcr.io/gocom/self-signer:0.1.0
+    volumes:
+      - ./certificates:/certificates
+    environment:
+      - DOMAIN=example.test
+    command: /bin/sh -c 'create-certificate && tail -f /dev/null'
+    healthcheck:
+      test: ["CMD-SHELL", "health-check"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+```
+
+The `tail -f /dev/null` start up command override will make so that the service keeps running, allowing other service to
+check the healthcheck status of the self-signer service.
 
 Development
 -----

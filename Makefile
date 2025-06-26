@@ -8,10 +8,10 @@ DOCKER_IMAGE_COMMAND ?= bash
 all: help
 
 build:
-	docker build --platform $(DOCKER_IMAGE_PLATFORM) -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
+	docker build --platform "$(DOCKER_IMAGE_PLATFORM)" -t "$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" .
 
 push:
-	docker build --platform $(DOCKER_IMAGE_PLATFORM) -t $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) . --push
+	docker build --platform "$(DOCKER_IMAGE_PLATFORM)" -t "$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" . --push
 
 run:
 	docker run -it --rm "$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)" "$(DOCKER_IMAGE_COMMAND)"

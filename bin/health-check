@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+for f in "certificate.key" "certificate.crt"; do
+  if ! [ -e "$CERTIFICATES_DIRECTORY/$f" ]; then
+    echo "$f does not exist in $CERTIFICATES_DIRECTORY" >&2
+    exit 1
+  fi
+done
+
+exit 0

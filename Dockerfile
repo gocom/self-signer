@@ -13,7 +13,9 @@ ENV CERTIFICATES_DIRECTORY=/certificates
 
 COPY ./bin /usr/local/bin
 
-RUN mkdir -p "$CERTIFICATES_DIRECTORY" \
+RUN apt-get update && apt-get install -y \
+    openssl \
+    && mkdir -p "$CERTIFICATES_DIRECTORY" \
     && chmod 777 "$CERTIFICATES_DIRECTORY" \
     && chmod +x /usr/local/bin/*
 
