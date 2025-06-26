@@ -1,4 +1,4 @@
-name: Push
+name: Docker push
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
       - '*.*.*'
 
 jobs:
-  push:
+  docker-push:
     name: Build and push image
     runs-on: ubuntu-latest
 
@@ -17,8 +17,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login to Docker registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login --password-stdin --username ${{ github.actor }} ghcr.io
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -34,4 +38,9 @@ jobs:
           echo "VERSIONEOF" >> $GITHUB_OUTPUT
 
       - name: Build and push
-        run: make push DOCKER_IMAGE_TAG=${{ steps.version.outputs.contents }} DOCKER_IMAGE_PLATFORM=linux/amd64,linux/arm64
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ steps.version.outputs.contents }}
