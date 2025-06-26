@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -eu
+
+cd "$CERTIFICATES_DIRECTORY"
+
+# Clean up.
+rm -f root-ca.key root-ca.crt root-ca.pem
+
+# Generate key.
+openssl genrsa -out root-ca.key 4096
+
+# Generate config.
+cat <<EOF > /tmp/root-certificate.cnf
+[SAN]
+keyUsage=digitalSignature
+basicConstraints=CA:true
+EOF
+
+# Generate crt.
+openssl req -x509 -new -nodes \
+  -key root-ca.key \
+  -sha256 \
+  -days "$CERTIFICATE_DAYS" \
+  -subj "/C=$CERTIFICATE_COUNTRY/ST=$CERTIFICATE_STATE/O=$CERTIFICATE_ORGANIZATION/CN=$DOMAIN" \
+  -reqexts SAN \
+  -config /tmp/root-certificate.cnf \
+  -out root-ca.crt
+
+# Create pem.
+cat root-ca.crt root-ca.key > root-ca.pem
+
+# Clean up.
+rm -f /tmp/root-certificate.cnf
+
+# Permissions.
+chmod a+r root-ca.key

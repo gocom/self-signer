@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -eu
+
+cd "$CERTIFICATES_DIRECTORY"
+
+# Clean up.
+rm -f certificate.csr certificate.key certificate.crt certificate.pem
+
+# Generate key.
+openssl genrsa -out certificate.key 2048
+
+# Generate certificate config.
+cat <<EOF > /tmp/certificate-request.cnf
+[alt_names]
+DNS.1 = $DOMAIN
+DNS.2 = *.$DOMAIN
+
+[SAN]
+subjectAltName = @alt_names
+EOF
+
+# Generate signing request.
+openssl req -new -sha256 \
+  -key certificate.key \
+  -subj "/C=$CERTIFICATE_COUNTRY/ST=C$CERTIFICATE_STATE/O=$CERTIFICATE_ORGANIZATION/CN=$DOMAIN" \
+  -reqexts SAN \
+  -config /tmp/certificate-request.cnf \
+  -out /tmp/certificate-request.csr
+
+# Generate crt.
+openssl x509 -req \
+  -extfile <(printf "subjectAltName=DNS:$DOMAIN,DNS:*.$DOMAIN") \
+  -in /tmp/certificate-request.csr \
+  -CA root-ca.crt \
+  -CAkey root-ca.key \
+  -CAcreateserial \
+  -out certificate.crt \
+  -days "$CERTIFICATE_DAYS" \
+  -sha256
+
+# Create pem.
+cat certificate.crt certificate.key > certificate.pem
+
+# Clean up.
+rm -f /tmp/root-certificate.cnf /tmp/certificate-request.cnf /tmp/certificate-request.csr
+
+# Permissions.
+chmod a+r certificate.key

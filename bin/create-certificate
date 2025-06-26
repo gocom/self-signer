@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+if ! [ -e "certificate.key" ] || ! [ -e "certificate.crt" ]; then
+  if ! [ -e "root-ca.key" ] || ! [ -e "root-ca.crt" ]; then
+    create-root-certificate
+  fi
+
+  create-site-certificate
+fi
