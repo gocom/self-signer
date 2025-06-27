@@ -100,13 +100,15 @@ Environment variables
 
 The following environment variables can be used to customize the generated certificates.
 
-| Variable                   | Default Value                   | Description                                                                                                                          |
-|----------------------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `DOMAIN`                   | _empty_                         | Defines which domains the certificate is generated for. The generated certificate is valid for the given domain and it's subdomains. |
-| `CERTIFICATE_DAYS`         | `3650`                          | How many days the generated root and server certificates are valid for.                                                              |
-| `CERTIFICATE_COUNTRY`      | `US`                            | Certificate country code.                                                                                                            |
-| `CERTIFICATE_STATE`        | `CA`                            | Certificate state code.                                                                                                              |
-| `CERTIFICATE_ORGANIZATION` | `Self-signed Local Certificate` | Certificate organization.                                                                                                            |
+| Variable                   | Default Value                   | Description                                                                                                                                              |
+|----------------------------|---------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `DOMAIN`                   | _empty_                         | Defines which domains the certificate is generated for. The generated certificate is valid for the given domain and it's subdomains.                     |
+| `CERTIFICATE_DAYS`         | `3650`                          | How many days the generated root and server certificates are valid for.                                                                                  |
+| `CERTIFICATE_COUNTRY`      | `US`                            | Certificate country code.                                                                                                                                |
+| `CERTIFICATE_STATE`        | `CA`                            | Certificate state code.                                                                                                                                  |
+| `CERTIFICATE_ORGANIZATION` | `Self-signed Local Certificate` | Certificate organization.                                                                                                                                |
+| `HOST_UID`                 | `1000`                          | If the service is started as root, maps the default start up command's user to the specified UID. Generated files will be owned by the specified user.   |
+| `HOST_GID`                 | `1000`                          | If the service is started as root, maps the default start up command's group as the specified GID. Generated files will be owned by the specified group. |
 
 Generated files
 -----

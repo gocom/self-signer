@@ -2,9 +2,16 @@
 
 set -e
 
+docker-permissions
+
 if [ "$#" -eq 0 ]; then
-  create-certificate "$@"
-  exit "$?"
+  if [ "$UID" -eq 0 ]; then
+    gosu "$CERTIFICATE_USER:$CERTIFICATE_GROUP" create-certificate
+    exit "$?"
+  else
+    create-certificate
+    exit "$?"
+  fi
 fi
 
 exec "$@"

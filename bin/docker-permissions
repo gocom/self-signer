@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "$UID" -eq 0 ]; then
+  if [ "$HOST_GID" ]; then
+    groupmod --gid "$HOST_GID" "$CERTIFICATE_GROUP"
+  fi
+
+  if [ "$HOST_UID" ]; then
+    usermod --uid "$HOST_UID" "$CERTIFICATE_USER"
+  fi
+
+  chown -R "$CERTIFICATE_USER:$CERTIFICATE_GROUP" "$CERTIFICATES_DIRECTORY"
+fi
