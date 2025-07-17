@@ -1,15 +1,7 @@
-<div align="center">
-
-📨 <br/>Self-signer
+Self-signer
 =====
 
-Docker image for generating self-signed certificates.
-
 Image: `ghcr.io/gocom/self-signer` | [Container Registry](https://github.com/gocom/self-signer/pkgs/container/self-signer)
-
-<hr/>
-
-</div>
 
 Docker image that generates a self-signed root and matching server certificate. This can be used for local development
 environments to easily provide self-signed certificates for your web server. The root certificate can be imported
@@ -19,7 +11,7 @@ The generated server certificate is granted against the generated root certifica
 a web server or other server client. The server certificate is a wildcard certificate that is valid for the domain set
 with `DOMAIN` environment variable, and it's subdomains.
 
-Setup
+⚡ Setup
 -----
 
 The **self-signer** image generates certificates to `/certificates` directory within the container, when the service
@@ -43,7 +35,7 @@ services:
       - DOMAIN=example.test
 ```
 
-In the above replace `1.0.0` with the version tag you want to use. It is recommended that you reference specific
+In the above, replace `0.1.0` with the version tag you want to use. It is recommended that you reference specific
 version or hash. The image follows [Semantic Versioning](https://semver.org/).
 
 When the project's services are started with Docker Compose, the **self-signer** service creates certificate files
@@ -95,7 +87,7 @@ repository as long as you do not add the server certificate to your trusted cert
 root certificate. Generally, no one will be able to generate new certificates validated by the root certificate as long
 as they do not have the root certificate's key.
 
-Environment variables
+🫧 Environment variables
 -----
 
 The following environment variables can be used to customize the generated certificates.
@@ -110,7 +102,7 @@ The following environment variables can be used to customize the generated certi
 | `HOST_UID`                 | `1000`                          | If the service is started as root, maps the default start up command's user to the specified UID. Generated files will be owned by the specified user.   |
 | `HOST_GID`                 | `1000`                          | If the service is started as root, maps the default start up command's group as the specified GID. Generated files will be owned by the specified group. |
 
-Generated files
+📁 Generated files
 -----
 
 The image will generate the following files into the `/certificates` directory inside the container, from where they can
@@ -125,7 +117,7 @@ be mounted to the host system:
 | `root-ca.key`     | Generated unencrypted key for the root certificate. Please avoid sharing or committing the root certificate key to your source repository. If both the `root-ca.crt` and `root-ca.key` exist, new server certificate is generated using the existing root certificate. |
 | `root-ca.pem`     | Generated server certificate in PEM format, containing both the key and the certificate. Please avoid sharing or committing the PEM file to your source repository.                                                                                                    |
 
-Advanced usage
+🥈 Advanced usage
 -----
 
 ### Manually conditionally generating certificate, if it does not exist
@@ -176,7 +168,7 @@ services:
 The `tail -f /dev/null` start up command override will make so that the service keeps running, allowing other service to
 check the healthcheck status of the self-signer service.
 
-Development
+🛠️ Development
 -----
 
 See [CONTRIBUTING.md](https://raw.github.com/gocom/self-signer/master/CONTRIBUTING.md)
